@@ -39,7 +39,25 @@ public class XMLTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    
+    @Test
+    public void helloTest() {
+        String path = "/Users/sunny/Desktop/UCIH/Programming style/milestone2/swe_262p_milestone2/src/test/resources/Issue537.xml";
+        try {
+            FileReader fileReader = new FileReader(path);
+//            XMLTokener tokener = new XMLTokener(fileReader);
+            JSONPointer jsonPointer = new JSONPointer("/clinical_study/brief_summary/");
+            JSONObject obj = new JSONObject();
+            obj.put("test", "testestestest");
+            JSONObject jsonObject = XML.toJSONObject(fileReader, jsonPointer, null);
+            System.out.println("--------------------------------------------------------------------");
+            System.out.println(jsonObject);
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("hello");
+    }
+
     /**
      * JSONObject from a null XML string.
      * Expects a NullPointerException
