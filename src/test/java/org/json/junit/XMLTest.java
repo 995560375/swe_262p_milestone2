@@ -10,14 +10,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,10 +38,9 @@ public class XMLTest {
         try {
             FileReader fileReader = new FileReader(path);
 //            XMLTokener tokener = new XMLTokener(fileReader);
-            JSONPointer jsonPointer = new JSONPointer("/clinical_study/brief_summary/");
-            JSONObject obj = new JSONObject();
-            obj.put("test", "testestestest");
-            JSONObject jsonObject = XML.toJSONObject(fileReader, jsonPointer, null);
+            JSONPointer jsonPointer = new JSONPointer("/clinical_study/brief_summary");
+            JSONObject jsonObject = XML.toJSONObject(fileReader, jsonPointer);
+            System.out.println(jsonPointer.toString());
             System.out.println("--------------------------------------------------------------------");
             System.out.println(jsonObject);
             fileReader.close();
@@ -56,6 +48,41 @@ public class XMLTest {
             e.printStackTrace();
         }
         System.out.println("hello");
+    }
+
+    @Test
+    public void simpleTest() throws FileNotFoundException {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<contact>\n"+
+                "  <nick>Crista </nick>\n"+
+                "  <name>Crista Lopes</name>\n" +
+                "  <address>\n" +
+                "    <street>Ave of Nowhere</street>\n" +
+                "    <zipcode>92614</zipcode>\n" +
+                "  </address>\n" +
+                "</contact>";
+        String path = "/Users/sunny/Desktop/UCIH/Programming style/milestone2/swe_262p_milestone2/src/test/resources/Issue537.xml";
+        try {
+            JSONObject jobj = XML.toJSONObject(new StringReader(xmlString), new JSONPointer("/contact/address"));
+//            JSONObject jobj = XML.toJSONObject(new FileReader(path), new JSONPointer("/clinical_study"));
+//            JSONObject jobj = XML.toJSONObject1(new StringReader(xmlString), new JSONPointer("/contact/address/"));
+            System.out.println("----------------result----------------");
+            System.out.println(jobj);
+        } catch (JSONException e) {
+            System.out.println(e);
+        }
+
+        System.out.println("-----------------------");
+
+//        try {
+//            JSONObject replacement = XML.toJSONObject("<street>Ave of the Arts</street>\n");
+//            System.out.println("Given replacement: " + replacement);
+//            JSONObject jobj = XML.toJSONObject(new StringReader(xmlString), new JSONPointer("/contact/address/street"));
+//            System.out.println("------------------result------------------");
+//            System.out.println(jobj);
+//        } catch (JSONException e) {
+//            System.out.println(e);
+//        }
     }
 
     /**
