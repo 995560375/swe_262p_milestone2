@@ -32,23 +32,22 @@ public class XMLTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    @Test
-    public void helloTest() {
-        String path = "/Users/sunny/Desktop/UCIH/Programming style/milestone2/swe_262p_milestone2/src/test/resources/Issue537.xml";
-        try {
-            FileReader fileReader = new FileReader(path);
-//            XMLTokener tokener = new XMLTokener(fileReader);
-            JSONPointer jsonPointer = new JSONPointer("/clinical_study/brief_summary");
-            JSONObject jsonObject = XML.toJSONObject(fileReader, jsonPointer);
-            System.out.println(jsonPointer.toString());
-            System.out.println("--------------------------------------------------------------------");
-            System.out.println(jsonObject);
-            fileReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("hello");
-    }
+//    @Test
+//    public void helloTest() {
+//        String path = "/Users/sunny/Desktop/UCIH/Programming style/milestone2/swe_262p_milestone2/src/test/resources/Issue537.xml";
+//        try {
+//            FileReader fileReader = new FileReader(path);
+////            XMLTokener tokener = new XMLTokener(fileReader);
+//            JSONPointer jsonPointer = new JSONPointer("/clinical_study/brief_summary");
+//            JSONObject jsonObject = XML.toJSONObject(fileReader, jsonPointer);
+//            System.out.println(jsonPointer.toString());
+//            System.out.println("--------------------------------------------------------------------");
+//            System.out.println(jsonObject);
+//            fileReader.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Test
     public void simpleTest() throws FileNotFoundException {
