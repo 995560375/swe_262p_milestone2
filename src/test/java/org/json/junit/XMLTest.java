@@ -19,7 +19,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-
 /**
  * Tests for JSON-Java XML.java
  * Note: noSpace() will be tested by JSONMLTest
@@ -32,57 +31,95 @@ public class XMLTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-//    @Test
-//    public void helloTest() {
-//        String path = "/Users/sunny/Desktop/UCIH/Programming style/milestone2/swe_262p_milestone2/src/test/resources/Issue537.xml";
-//        try {
-//            FileReader fileReader = new FileReader(path);
-////            XMLTokener tokener = new XMLTokener(fileReader);
-//            JSONPointer jsonPointer = new JSONPointer("/clinical_study/brief_summary");
-//            JSONObject jsonObject = XML.toJSONObject(fileReader, jsonPointer);
-//            System.out.println(jsonPointer.toString());
-//            System.out.println("--------------------------------------------------------------------");
-//            System.out.println(jsonObject);
-//            fileReader.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private static final String testXMLFilePathString = "src/test/resources/Issue537.xml";
+    private static final String testPathString = "/clinical_study/brief_summary";
+    private static final String testNonexistentPathString = "/clinical_study/test_nonexistent_path";
+    private static final String emptyJSONObjectString = "{}";
+    private static final String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+            "<contact>\n"+
+            "  <nick>Crista </nick>\n"+
+            "  <name>Crista Lopes</name>\n" +
+            "  <address>\n" +
+            "    <street>Ave of Nowhere</street>\n" +
+            "    <zipcode>92614</zipcode>\n" +
+            "  </address>\n" +
+            "</contact>";
+
+    //#region JSONObject toJSONObject(Reader reader, JSONPointer path)
+    @Test
+    public void testFirstToJSONObjectFunc_withValidInput_shouldProcess() throws FileNotFoundException {
+        final String expectedOutputJSONObjectString = "{\"brief_summary\":{\"textblock\":\"CLEAR SYNERGY is an international multi center 2x2 randomized placebo controlled trial of\"}}";
+        Reader testReader = new FileReader(testXMLFilePathString);
+        JSONPointer testPath = new JSONPointer(testPathString);
+        JSONObject jsonObject = XML.toJSONObject(testReader, testPath);
+
+        assertEquals(expectedOutputJSONObjectString, jsonObject.toString());
+    }
 
     @Test
-    public void simpleTest() throws FileNotFoundException {
-        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-                "<contact>\n"+
-                "  <nick>Crista </nick>\n"+
-                "  <name>Crista Lopes</name>\n" +
-                "  <address>\n" +
-                "    <street>Ave of Nowhere</street>\n" +
-                "    <zipcode>92614</zipcode>\n" +
-                "  </address>\n" +
-                "</contact>";
-        String path = "/Users/sunny/Desktop/UCIH/Programming style/milestone2/swe_262p_milestone2/src/test/resources/Issue537.xml";
-        try {
-            JSONObject jobj = XML.toJSONObject(new StringReader(xmlString), new JSONPointer("/contact/address/street"));
-//            JSONObject jobj = XML.toJSONObject(new FileReader(path), new JSONPointer("/clinical_study"));
-//            JSONObject jobj = XML.toJSONObject1(new StringReader(xmlString), new JSONPointer("/contact/address/"));
-            System.out.println("----------------result----------------");
-            System.out.println(jobj);
-        } catch (JSONException e) {
-            System.out.println(e);
-        }
+    public void testFristToJSONObjectFunc_withNonexistentPath_shouldReturnEmpty() throws FileNotFoundException {
+        Reader testReader = new FileReader(testXMLFilePathString);
+        JSONPointer testPath = new JSONPointer(testNonexistentPathString);
+        JSONObject jsonObject = XML.toJSONObject(testReader, testPath);
 
-        System.out.println("-----------------------");
+        assertEquals(emptyJSONObjectString, jsonObject.toString());
+    }
+
+    @Test
+    public void testFristToJSONObjectFunc_withNonXMLFileContent_shouldReturnEmpty() throws FileNotFoundException {
+        final String testNonXMLContentString = "Test invalid XML";
+        Reader testReader = new StringReader(testNonXMLContentString);
+        JSONPointer testPath = new JSONPointer(testPathString);
+        JSONObject jsonObject = XML.toJSONObject(testReader, testPath);
+
+        assertEquals(emptyJSONObjectString, jsonObject.toString());
+    }
+
+    @Test
+    public void testFristToJSONObjectFunc_withInvalidXMLFileContent_throwsJSONException() throws FileNotFoundException {
+        final String testInvalidXMLContentString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""+
+                "   xsi:noNamespaceSchemaLocation='test.xsd'>\n"+
+                "    <address>\n"+
+                "       <name/x>\n"+
+                "       <street>abc street</street>\n"+
+                "   </address>\n"+
+                "</addresses>";
+        Reader testReader = new StringReader(testInvalidXMLContentString);
+        JSONPointer testPath = new JSONPointer(testPathString);
 
         try {
-            JSONObject replacement = XML.toJSONObject("<street>Ave of the Arts</street>\n");
-            System.out.println("Given replacement: " + replacement);
-            JSONObject jobj = XML.toJSONObject(new StringReader(xmlString), new JSONPointer("/contact/address/street"), replacement);
-            System.out.println("------------------result------------------");
-            System.out.println(jobj);
+            XML.toJSONObject(testReader, testPath);
+            fail("Expecting a JSONException");
         } catch (JSONException e) {
-            System.out.println(e);
+            assertEquals("Expecting an exception message",
+                    "Misshaped tag at 176 [character 14 line 4]",
+                    e.getMessage());
         }
     }
+    //#endregion
+
+    //#region JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)
+    @Test
+    public void testSecondToJSONObjectFunc_withValidInput_shouldReplace() throws FileNotFoundException {
+        JSONObject originalJsonObject = XML.toJSONObject(new StringReader(xmlString), new JSONPointer("/contact/address/street"));
+        assertEquals("{\"street\":\"Ave of Nowhere\"}", originalJsonObject.toString());
+
+        JSONObject replacement = XML.toJSONObject("<street>Ave of the Arts</street>\n");
+        JSONObject updatedJsonObject = XML.toJSONObject(new StringReader(xmlString), new JSONPointer("/contact/address/street"), replacement);
+        assertEquals("{\"contact\":{\"nick\":\"Crista\",\"address\":{\"zipcode\":92614,\"street\":\"Ave of the Arts\"},\"name\":\"Crista Lopes\"}}", updatedJsonObject.toString());
+    }
+
+    @Test
+    public void testSecondToJSONObjectFunc_withNonexistentPath_shouldNotReplace() throws FileNotFoundException {
+        JSONObject originalJsonObject = XML.toJSONObject(new StringReader(xmlString), new JSONPointer("/contact/address/street"));
+        assertEquals("{\"street\":\"Ave of Nowhere\"}", originalJsonObject.toString());
+
+        JSONObject replacement = XML.toJSONObject("<street>Ave of the Arts</street>\n");
+        JSONObject updatedJsonObject = XML.toJSONObject(new StringReader(xmlString), new JSONPointer(testNonexistentPathString), replacement);
+        assertEquals("{\"contact\":{\"nick\":\"Crista\",\"address\":{\"zipcode\":92614,\"street\":\"Ave of Nowhere\"},\"name\":\"Crista Lopes\"}}", updatedJsonObject.toString());
+    }
+    //#endregion
 
     /**
      * JSONObject from a null XML string.

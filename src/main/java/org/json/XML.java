@@ -470,7 +470,6 @@ public class XML {
             }
         }
     }
-    private static boolean isFound = false;
     private static boolean parseSearch(
             XMLTokener x,
             JSONObject context,
@@ -486,6 +485,8 @@ public class XML {
         String tagName;
         Object token;
         XMLXsiTypeConverter<?> xmlXsiTypeConverter;
+
+        boolean isFound = false;
 
         // Test for and skip past these forms:
         // <!-- ... -->
