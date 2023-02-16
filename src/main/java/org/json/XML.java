@@ -1140,6 +1140,9 @@ public class XML {
         }
     }
 
+    /**
+     * Use for Milestone3
+     */
     private static boolean parseAndModify(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, Function<String, String> changeString)
             throws JSONException {
         char c;
@@ -1658,6 +1661,9 @@ public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObjec
         return jo;
     }
 
+    /**
+     * Milestone3
+     */
     public static JSONObject toJSONObject(Reader reader, Function<String, String> changeString) throws JSONException {
         JSONObject jo = new JSONObject();
         XMLTokener x = new XMLTokener(reader);

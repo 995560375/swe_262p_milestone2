@@ -46,13 +46,11 @@ public class XMLTest {
             "  </address>\n" +
             "</contact>";
 
-    //#region JSONObject toJSONObject(Reader reader, JSONPointer path)
-    @Test
-    public void simpleTest() {
-        Function<String, String> fun = str -> str + "123";
-        JSONObject obj = XML.toJSONObject(new StringReader(xmlString), fun);
-        System.out.println(obj);
-    }
+
+
+    /**
+     * Test for Milestone2
+     */
 
     @Test
     public void testFirstToJSONObjectFunc_withValidInput_shouldProcess() throws FileNotFoundException {
@@ -127,6 +125,40 @@ public class XMLTest {
         JSONObject updatedJsonObject = XML.toJSONObject(new StringReader(xmlString), new JSONPointer(testNonexistentPathString), replacement);
         assertEquals("{\"contact\":{\"nick\":\"Crista\",\"address\":{\"zipcode\":92614,\"street\":\"Ave of Nowhere\"},\"name\":\"Crista Lopes\"}}", updatedJsonObject.toString());
     }
+
+
+    /**
+     * Test for Milestone3
+     */
+    @Test
+    public void testThirdToJSONObjectFunc_withAllKeysAddPrefix() {
+        final String expectedJSONObjectString = "{\"swe262contact\":{\"swe262address\":{\"swe262street\":\"Ave of Nowhere\",\"swe262zipcode\":92614},\"swe262nick\":\"Crista\",\"swe262name\":\"Crista Lopes\"}}";
+        Function<String, String> fun = str -> "swe262" + str;
+        JSONObject jsonObject = XML.toJSONObject(new StringReader(xmlString), fun);
+
+        assertEquals(expectedJSONObjectString, jsonObject.toString());
+    }
+
+    @Test
+    public void testThirdToJSONObjectFunc_withAllKeysReversed() {
+        final String expectedJSONObjectString = "{\"tcatnoc\":{\"eman\":\"Crista Lopes\",\"sserdda\":{\"edocpiz\":92614,\"teerts\":\"Ave of Nowhere\"},\"kcin\":\"Crista\"}}";
+        Function<String, String> fun = str -> new StringBuilder(str).reverse().toString();
+        JSONObject jsonObject = XML.toJSONObject(new StringReader(xmlString), fun);
+
+        assertEquals(expectedJSONObjectString, jsonObject.toString());
+    }
+
+    @Test
+    public void testThirdToJSONObjectFunc_withNullFunc_shouldThrowNullPointerException() {
+        Function<String, String> fun = null;
+        try {
+            JSONObject jsonObject = XML.toJSONObject(new StringReader(xmlString), fun);
+            fail();
+        } catch (NullPointerException e) {
+        }
+    }
+
+
     //#endregion
 
     /**
