@@ -1,7 +1,7 @@
 # MSWE 262P Project
 
 ## Milestone3
-- In this project, we add two overload methods at src/main/java/org.json/XML.java. The method signatures are as follows:
+- In this project, we add a overload method at src/main/java/org.json/XML.java. The method signatures are as follows:
 - public static JSONObject toJSONObject(Reader reader, Function<String, String> changeString)
 
 - We have made modifications to the original parse function and renamed it to "parseAndModify". This change allows us to modify the key while parsing the XML file directly, unlike the original method, which requires parsing the XML file completely and converting it into a JsonObject before changing the key. The milestone1 approach requires traversing the file(json) twice, making it less time-efficient. However, with our modified parse function, we can accomplish the same task in a single traversal of the file, resulting in a more efficient solution.
