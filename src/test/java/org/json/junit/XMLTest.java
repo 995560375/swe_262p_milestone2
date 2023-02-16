@@ -13,6 +13,7 @@ import static org.junit.Assert.fail;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.json.*;
 import org.junit.Rule;
@@ -46,6 +47,13 @@ public class XMLTest {
             "</contact>";
 
     //#region JSONObject toJSONObject(Reader reader, JSONPointer path)
+    @Test
+    public void simpleTest() {
+        Function<String, String> fun = str -> str + "123";
+        JSONObject obj = XML.toJSONObject(new StringReader(xmlString), fun);
+        System.out.println(obj);
+    }
+
     @Test
     public void testFirstToJSONObjectFunc_withValidInput_shouldProcess() throws FileNotFoundException {
         final String expectedOutputJSONObjectString = "{\"brief_summary\":{\"textblock\":\"CLEAR SYNERGY is an international multi center 2x2 randomized placebo controlled trial of\"}}";
