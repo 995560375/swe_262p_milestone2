@@ -3509,4 +3509,55 @@ public class JSONObjectTest {
                 .put("b", 2);
         assertFalse(jo1.similar(jo3));
     }
+
+
+    /**
+     * Test for Milestone4
+     */
+
+    @Test
+    public void testToStream(){
+        final String xml = "<root>\n" +
+                "  <address>\n" +
+                "    <state>CA</state>\n" +
+                "    <street>123 Main St</street>\n" +
+                "    <city>Anytown</city>\n" +
+                "  </address>\n" +
+                "  <name>John Smith</name>\n" +
+                "  <hobbies>\n" +
+                "    <item>reading</item>\n" +
+                "    <item><add>hiking</add></item>\n" +
+                "    <item>biking</item>\n" +
+                "  </hobbies>\n" +
+                "  <age>35</age>\n" +
+                "</root>";
+
+        String moreNestedXml = "<root>"
+                + "<level1>"
+                +   "<level2>"
+                +     "<level3>"
+                +       "<array>"
+                +         "<item>"
+                +           "<name>John</name>"
+                +           "<age>30</age>"
+                +         "</item>"
+                +         "<item>"
+                +           "<name>Jane</name>"
+                +           "<age>25</age>"
+                +         "</item>"
+                +         "<item>"
+                +           "<name>Bob</name>"
+                +           "<age>40</age>"
+                +         "</item>"
+                +       "</array>"
+                +     "</level3>"
+                +   "</level2>"
+                + "</level1>"
+                + "</root>";
+
+
+        JSONObject obj1 = XML.toJSONObject(moreNestedXml);
+        obj1.toStream().forEach(System.out::println);
+    }
+
 }

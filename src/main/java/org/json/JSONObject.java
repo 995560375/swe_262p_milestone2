@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -2713,4 +2714,58 @@ public class JSONObject {
             "JavaBean object contains recursively defined member variable of key " + quote(key)
         );
     }
+
+
+    /**
+     * Milestone4  add toStream method
+     */
+
+    private final Stream.Builder<JSONObject> streamBuilder = Stream.builder();
+
+    public Stream<JSONObject> toStream(){
+        Set<Entry<String, Object>> entrySet = this.entrySet();
+        for(Entry<String, Object> entry: entrySet){
+            if(entry.getValue() instanceof JSONObject){
+                String keyPath = "/" + entry.getKey();
+                buildStream(keyPath, entry.getValue());
+            }else if(entry.getValue() instanceof JSONArray){
+                String keyPath = "/" + entry.getKey();
+                buildStream(keyPath, entry.getValue());
+            }else if(entry.equals(null)){
+                streamBuilder.add(null);
+            }else{
+                JSONObject newObj = new JSONObject();
+                newObj.put("/" + entry.getKey(), entry.getValue());
+                streamBuilder.add(newObj);
+            }
+        }
+        return streamBuilder.build();
+    }
+
+    public void buildStream(String keyPath, Object obj){
+        if(obj instanceof JSONObject){
+           Set<Entry<String, Object>> entrySet = ((JSONObject)obj).entrySet();
+            for(Entry<String, Object> entry: entrySet){
+                if(entry.getValue() instanceof JSONObject || entry.getValue() instanceof JSONArray){
+                    buildStream(keyPath + "/" + entry.getKey(), entry.getValue());
+                }else {
+                    JSONObject newObj = new JSONObject();
+                    newObj.put(keyPath + "/" + entry.getKey(), entry.getValue());
+                    streamBuilder.add(newObj);
+                }
+            }
+        }else if(obj instanceof JSONArray){
+            int id = 0;
+            for(Object cur : (JSONArray) obj){
+                buildStream(keyPath + "/" + id, cur);
+                id++;
+            }
+        }else {
+            JSONObject newObj = new JSONObject();
+            newObj.put(keyPath,obj);
+            streamBuilder.add(newObj);
+        }
+
+    }
+
 }
