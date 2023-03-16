@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
+import java.util.concurrent.*;
 import java.util.function.Function;
 
 
@@ -1931,4 +1932,38 @@ public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObjec
         }
         return sb.toString();
     }
+
+    /**
+     * Milestone5
+     * https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html#shutdownNow()
+     * the submit() function will receive a task which can either be a Runnable or Callable instance.
+     * Submits a value-returning task for execution and returns a Future representing the pending results of the task.
+     */
+
+    private static class Task implements Callable<JSONObject>{
+        private Reader reader;
+        public Task(Reader reader){
+            this.reader = reader;
+        }
+        @Override
+        public JSONObject call() throws Exception{
+            return toJSONObject(reader);
+        }
+    }
+
+    public static Future<JSONObject> toJSONObjectMilestone5(Reader reader){
+        if (reader == null) {
+            CompletableFuture<JSONObject> future = new CompletableFuture<>();
+            future.completeExceptionally(new IllegalArgumentException("Reader parameter cannot be null"));
+            return future;
+        }
+        ExecutorService executor = Executors.newCachedThreadPool();
+        Future<JSONObject> future = executor.submit(new Task(reader));
+        executor.shutdown();
+        return future;
+    }
+
+
+
+
 }

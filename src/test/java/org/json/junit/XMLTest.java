@@ -4,21 +4,19 @@ package org.json.junit;
 Public Domain.
 */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import org.json.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for JSON-Java XML.java
@@ -157,6 +155,37 @@ public class XMLTest {
         } catch (NullPointerException e) {
         }
     }
+
+    /**
+     * Test for Milestone5
+     */
+    @Test
+    public void testToJSONObjectMilestone5_shouldPass(){
+        final String expected = "{\"contact\":{\"nick\":\"Crista\",\"address\":{\"zipcode\":92614,\"street\":\"Ave of Nowhere\"},\"name\":\"Crista Lopes\"}}";
+        Reader reader = new StringReader(xmlString);
+        Future<JSONObject> future = XML.toJSONObjectMilestone5(reader);
+        JSONObject obj;
+        try {
+            while (!future.isDone()){
+                System.out.println("test asynchronous: when JsonObject is not available, do some other thing");
+            }
+            obj = future.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals(expected, obj.toString());
+    }
+
+    @Test
+    public void testToJSONObjectMilestone5_withNullReaderShouldThrowException(){
+        assertThrows(ExecutionException.class, () -> {
+                XML.toJSONObjectMilestone5(null).get();
+            });
+    }
+
+
 
 
     //#endregion
