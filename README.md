@@ -13,9 +13,9 @@ The two functions start at JSONObject.java line 2719. It converts a JSON object 
 - The Unit test start at JSONObjectTest.java line 3515. It tests the stream fuctions like filter, forEach, size and iteration.
 
 ## Milestone5
-n milestone 5, we added an asynchronous method to the XML library with the following signature: public static Future<JSONObject> toJSONObjectMilestone5(Reader reader). 
+- In milestone 5, we added an asynchronous method to the XML library with the following signature: public static Future<JSONObject> toJSONObjectMilestone5(Reader reader). 
 
-You can find the code in XML.java and start from 1943 line, and test in the XMLtest.java starting from line162.
+- You can find the code in XML.java and start from 1943 line, and test in the XMLtest.java starting from line162.
 
 To implement this method asynchronously, we initialize an ExecutorService within the method and use the submit function to execute a task. The submit function can accept a Runnable or Callable instance, so we create a Callable class called Task. The submit function returns a Future object, which represents the pending result of the task. We can retrieve the result by calling the get() function of the Future interface. This asynchronous method allows us to perform other tasks while waiting for the JSONObject to become available.
 
