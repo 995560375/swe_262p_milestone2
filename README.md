@@ -6,7 +6,11 @@
 
 - We have made modifications to the original parse function and renamed it to "parseAndModify". This change allows us to modify the key while parsing the XML file directly, unlike the original method, which requires parsing the XML file completely and converting it into a JsonObject before changing the key. The milestone1 approach requires traversing the file(json) twice, making it less time-efficient. However, with our modified parse function, we can accomplish the same task in a single traversal of the file, resulting in a more efficient solution.
 
+## Milestone4
+- In this project, we add two functions in src/main/java/org.json/JSONObject.java.
+The two functions start at JSONObject.java line 2719. It converts a JSON object to a stream of JSON objects. The toStream() method builds a Stream.Builder and then calls the buildStream() method to add JSON objects to the builder based on the keys and values in the original JSON object.
 
+- The Unit test start at JSONObjectTest.java line 3515. It tests the stream fuctions like filter, forEach, size and iteration.
 
 
 ![Json-Java logo](https://github.com/stleary/JSON-java/blob/master/images/JsonJava.png?raw=true)

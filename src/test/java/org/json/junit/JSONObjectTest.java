@@ -24,6 +24,8 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.CDL;
 import org.json.JSONArray;
@@ -3514,50 +3516,62 @@ public class JSONObjectTest {
     /**
      * Test for Milestone4
      */
+    final String xml = "<root>\n" +
+            "  <address>\n" +
+            "    <state>CA</state>\n" +
+            "    <street>123 Main St</street>\n" +
+            "    <city>Anytown</city>\n" +
+            "  </address>\n" +
+            "  <name>John Smith</name>\n" +
+            "  <hobbies>\n" +
+            "    <item>reading</item>\n" +
+            "    <item><add>hiking</add></item>\n" +
+            "    <item>biking</item>\n" +
+            "  </hobbies>\n" +
+            "  <age>35</age>\n" +
+            "</root>";
 
+    final String moreNestedXml = "<root>"
+            + "<level1>"
+            +   "<level2>"
+            +     "<level3>"
+            +       "<array>"
+            +         "<item>"
+            +           "<name>John</name>"
+            +           "<age>30</age>"
+            +         "</item>"
+            +         "<item>"
+            +           "<name>Jane</name>"
+            +           "<age>25</age>"
+            +         "</item>"
+            +         "<item>"
+            +           "<name>Bob</name>"
+            +           "<age>40</age>"
+            +         "</item>"
+            +       "</array>"
+            +     "</level3>"
+            +   "</level2>"
+            + "</level1>"
+            + "</root>";
     @Test
     public void testToStream(){
-        final String xml = "<root>\n" +
-                "  <address>\n" +
-                "    <state>CA</state>\n" +
-                "    <street>123 Main St</street>\n" +
-                "    <city>Anytown</city>\n" +
-                "  </address>\n" +
-                "  <name>John Smith</name>\n" +
-                "  <hobbies>\n" +
-                "    <item>reading</item>\n" +
-                "    <item><add>hiking</add></item>\n" +
-                "    <item>biking</item>\n" +
-                "  </hobbies>\n" +
-                "  <age>35</age>\n" +
-                "</root>";
-
-        String moreNestedXml = "<root>"
-                + "<level1>"
-                +   "<level2>"
-                +     "<level3>"
-                +       "<array>"
-                +         "<item>"
-                +           "<name>John</name>"
-                +           "<age>30</age>"
-                +         "</item>"
-                +         "<item>"
-                +           "<name>Jane</name>"
-                +           "<age>25</age>"
-                +         "</item>"
-                +         "<item>"
-                +           "<name>Bob</name>"
-                +           "<age>40</age>"
-                +         "</item>"
-                +       "</array>"
-                +     "</level3>"
-                +   "</level2>"
-                + "</level1>"
-                + "</root>";
-
-
         JSONObject obj1 = XML.toJSONObject(moreNestedXml);
         obj1.toStream().forEach(System.out::println);
+    }
+
+    @Test
+    public void testSize() {
+        JSONObject obj = XML.toJSONObject(xml);
+        assertEquals(8, obj.toStream().count());
+    }
+
+    @Test
+    public void testFilter() {
+        JSONObject obj = XML.toJSONObject(xml);
+        List<JSONObject> list = obj.toStream().filter(node -> node.isEmpty() == false).collect(Collectors.toList());
+        JSONObject obj2 = XML.toJSONObject(xml);
+        List<JSONObject> list2 = obj2.toStream().collect(Collectors.toList());
+        assertEquals(list.toString(), list2.toString());
     }
 
 }
