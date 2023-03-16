@@ -253,10 +253,10 @@ public class XML {
         Object token;
         XMLXsiTypeConverter<?> xmlXsiTypeConverter;
 
-        boolean isFound = false;
+//        boolean isFound = false;
 
 
-        if (isFound && !currentPath.startsWith(targetPath)) return false;
+//        if (isFound && !currentPath.startsWith(targetPath)) return false;
 
         System.out.println("context: " + context);
         token = x.nextToken();
@@ -331,7 +331,7 @@ public class XML {
             // Only create the JSONObject when the path .
             if (currentPath.startsWith(targetPath)) {
                 jsonObject = new JSONObject();
-                isFound = true;
+//                isFound = true;
             }
             token = null;
             boolean nilAttributeFound = false;
